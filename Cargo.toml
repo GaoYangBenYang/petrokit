@@ -2,5 +2,31 @@
 name = "petrokit"
 version = "0.1.0"
 edition = "2024"
+description = "Petroleum exploration data parser: LAS, LIS, DLIS and more"
+license = "MIT"
+repository = "https://github.com/gaoyangbenyang/petrokit"
+keywords = [
+    "LAS",
+    "LIS",
+    "DLIS",
+]
+categories = ["science", "parser-implementations"]
 
 [dependencies]
+serde = { version = "1", features = ["derive"], optional = true }
+byteorder = { version = "1", optional = true }
+csv = { version = "1", optional = true }
+
+[features]
+default = ["las", "csv", "serde"]
+
+# 格式支持
+las = []
+lis = ["dep:byteorder"]
+dlis = ["dep:byteorder"]
+
+# 全部格式
+all = ["las", "lis", "dlis"]
+
+# 序列化
+serde = ["dep:serde"]
