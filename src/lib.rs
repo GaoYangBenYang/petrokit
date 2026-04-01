@@ -1,14 +1,22 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+pub mod error;
+pub mod models;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[cfg(feature = "las")]
+pub mod formats::las;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+pub use error::{PetroError, PetroResult};
+pub use models::*;
+
+/// 自动识别测井数据格式并解析
+pub fn parse_file(path: &str) -> PetroResult<WellLog> {
+    let ext = std::path::Path::new(path)
+        .extension()
+        .and_then(|e| e.to_str())
+        .unwrap_or("")
+        .to_lowercase();
+
+    match ext.as_str() {
+        "las" => formats::las::parse_file(path),
+        _ => Err(PetroError::UnsupportedFormat(ext)),
     }
 }
