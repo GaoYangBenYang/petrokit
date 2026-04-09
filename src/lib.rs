@@ -1,22 +1,23 @@
-// pub mod error;
-// pub mod models;
-//
-// #[cfg(feature = "las")]
-// // pub mod formats::las;
-//
-// pub use error::{PetroError, PetroResult};
-// pub use models::*;
+mod error;
+mod models;
+mod types;
+#[cfg(feature = "las")]
+mod formats;
+
+use error::global_error::GlobalError;
+use types::PetroResult;
+use std::path::Path;
+use formats::las;
 
 // 自动识别测井数据格式并解析
-// pub fn parse_file(path: &str) -> PetroResult<WellLog> {
-//     let ext = std::path::Path::new(path)
-//         .extension()
-//         .and_then(|e| e.to_str())
-//         .unwrap_or("")
-//         .to_lowercase();
-//
-//     match ext.as_str() {
-//         "las" => formats::las::parse_file(path),
-//         _ => Err(PetroError::UnsupportedFormat(ext)),
-//     }
-// }
+pub fn parse_file<WellLog>(path: &str) -> PetroResult<WellLog> {
+    let ext = Path::new(path)
+        .extension()
+        .and_then(|e| e.to_str())
+        .unwrap_or("")
+        .to_lowercase();
+    match ext.as_str() {
+        "las" => las::parse::parse_file(path),
+        _ => Err(GlobalError::UnsupportedFormat(ext)),
+    }
+}
