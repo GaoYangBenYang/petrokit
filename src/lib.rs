@@ -1,13 +1,13 @@
 mod error;
-mod models;
-mod types;
 #[cfg(feature = "las")]
 mod formats;
+mod models;
+mod types;
 
 use error::global_error::GlobalError;
-use types::PetroResult;
+use formats::las::parse;
 use std::path::Path;
-use formats::las;
+use types::PetroResult;
 
 // 自动识别测井数据格式并解析
 pub fn parse_file<WellLog>(path: &str) -> PetroResult<WellLog> {
@@ -17,7 +17,7 @@ pub fn parse_file<WellLog>(path: &str) -> PetroResult<WellLog> {
         .unwrap_or("")
         .to_lowercase();
     match ext.as_str() {
-        "las" => las::parse::parse_file(path),
+        "las" => parse::parse_file(path),
         _ => Err(GlobalError::UnsupportedFormat(ext)),
     }
 }
